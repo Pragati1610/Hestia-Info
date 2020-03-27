@@ -7,18 +7,26 @@ const http = require('http')
 
 http.createServer(async(req, res) => {
         if(req.url === "/node"){
-            var data = await apiCallFromNode.callApi();
-            res.write(JSON.stringify(data));
-            res.end();
-           
-            client.on("error", function(error) {
-                console.error(error);
-              });
-            
-            var dataString = JSON.stringify(data);
-            
-            client.set("key", dataString, redis.print)
-            client.get("key", redis.print);
+
+            var key = "randomString";
+            client.get(key,function(err, reply){
+                if(reply){
+                    res.write(reply);
+                }else{
+                    var data = await apiCallFromNode.callApi();
+                    res.write(JSON.stringify(data)); 
+                    res.end();                       //waits for all the chunks of responses the server 
+                                                    //provides to our requests and then ends the connection
+                    client.on("error", function(error) {
+                        console.error(error);
+                    });
+                    
+                    var dataString = JSON.stringify(data);
+                    
+                    client.set("key", dataString, redis.print);
+                    client.get("key", redis.print);
+                }
+            });                       
         }
 }).listen(3000);
 
