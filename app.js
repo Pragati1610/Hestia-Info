@@ -5,11 +5,14 @@ const client = redis.createClient("redis://h:p0251a35af0bf4e3e133ee844da1ab4df20
 
 const http = require('http')
 
+const port = process.env.PORT||3000;
+
 http.createServer(async(req, res) => {
         if(req.url === "/node"){
 
             var key = "randomString";
             client.get(key,async function(err, reply){
+                res.setHeader('Content-Type', 'application/json; charset = utf-8');
                 if(reply){
                     res.write(reply);
                 }else{
@@ -29,5 +32,5 @@ http.createServer(async(req, res) => {
             });           
             
         }
-}).listen(3000);
+}).listen(port);
 
