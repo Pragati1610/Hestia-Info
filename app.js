@@ -9,7 +9,7 @@ http.createServer(async(req, res) => {
         if(req.url === "/node"){
 
             var key = "randomString";
-            client.get(key,function(err, reply){
+            client.get(key,async function(err, reply){
                 if(reply){
                     res.write(reply);
                 }else{
@@ -26,7 +26,8 @@ http.createServer(async(req, res) => {
                     client.set("key", dataString, redis.print);
                     client.get("key", redis.print);
                 }
-            });                       
+            });           
+            
         }
 }).listen(3000);
 
