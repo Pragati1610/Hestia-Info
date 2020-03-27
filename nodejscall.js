@@ -21,8 +21,8 @@ const callExternalApiUsingHttp = async () => {
   console.log(feed.title);
 
   // filter items using the function we wrote up top
-  const covidNews = feed.items.filter(filterFun);
-  return(covidNews);
+  feed.items = feed.items.filter(filterFun);
+  return(feed);
 };
 
 module.exports.callApi = callExternalApiUsingHttp;
