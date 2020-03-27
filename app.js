@@ -15,6 +15,10 @@ http.createServer(async(req, res) => {
                 res.setHeader('Content-Type', 'application/json; charset = utf-8');
                 if(reply){
                     res.write(reply);
+                    res.end();
+                    var data = await apiCallFromNode.callApi();
+                    client.set(key, data);
+
                 }else{
                     var data = await apiCallFromNode.callApi();
                     res.write(JSON.stringify(data)); 
@@ -24,10 +28,10 @@ http.createServer(async(req, res) => {
                         console.error(error);
                     });
                     
-                    var dataString = JSON.stringify(data);
                     
-                    client.set("key", dataString, redis.print);
-                    client.get("key", redis.print);
+                    // these are unnecessary
+                    // client.set("key", dataString, redis.print);
+                    // client.get("key", redis.print);
                 }
             });           
             
