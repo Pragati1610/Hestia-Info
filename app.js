@@ -16,7 +16,7 @@ http.createServer(async(req, res) => {
 
             var key = "fandomString";
             client.get(key,async function(err, reply){
-                res.setHeader('Content-Type', 'application/json; charset = utf-8');
+                res.setHeader('Content-Type', 'application/json; charset=utf-8');
                 if(reply){
                     res.write(reply);
                     res.end();
