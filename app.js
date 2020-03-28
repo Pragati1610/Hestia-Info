@@ -22,7 +22,6 @@ http.createServer(async(req, res) => {
                     res.end();
                     var data = await apiCallFromNode.callApi();
                     client.set(key, data);
-
                 }else{
                     var data = await apiCallFromNode.callApi();
                     res.write(JSON.stringify(data)); 
@@ -31,14 +30,11 @@ http.createServer(async(req, res) => {
                     client.on("error", function(error) {
                         console.error(error);
                     });
-                    
-                    
                     // these are unnecessary
                     // client.set("key", dataString, redis.print);
                     // client.get("key", redis.print);
                 }
-            });           
-            
+            });                      
         }
 }).listen(port);
 
