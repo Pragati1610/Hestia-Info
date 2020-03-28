@@ -1,3 +1,3 @@
-# COVID19-Hestia-info
+# COVID19-Distrellect
 
 Provides you with the latest covid updates 

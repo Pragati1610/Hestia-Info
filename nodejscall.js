@@ -18,6 +18,8 @@ function filterFun(item) {
 // declare and assign function to export, note that I've removed the () at the end, since that transforms it into a function call
 const callExternalApiUsingHttp = async () => {
   let feed = await parser.parseURL(EXTERNAL_URL);
+  feed["source"]=feed["title"];
+  delete feed['title'];
   console.log(feed.title);
 
   // filter items using the function we wrote up top
