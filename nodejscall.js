@@ -20,7 +20,7 @@ const callExternalApiUsingHttp = async () => {
   let feed = await parser.parseURL(EXTERNAL_URL);
   feed["source"]=feed["title"];
   delete feed['title'];
-  console.log(feed.title);
+  console.log(feed.source);
 
   // filter items using the function we wrote up top
   feed.items = feed.items.filter(filterFun);
