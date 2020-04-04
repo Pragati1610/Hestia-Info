@@ -15,16 +15,28 @@ function filterFun(item) {
   );
 }
 
+function mapFunc(item) {
+  let splitItems = item.link.split("/")[5];
+  splitItems = splitItems.split("-");
+  const dateStr = splitItems[2] + "-" + splitItems[1] + "-" + splitItems[0];
+  const date = new Date(dateStr);
+  item.isoDate = date;
+  return item;
+}
+
 // declare and assign function to export, note that I've removed the () at the end, since that transforms it into a function call
 const callExternalApiUsingHttp = async () => {
   let feed = await parser.parseURL(EXTERNAL_URL);
-  feed["source"]=feed["title"];
-  delete feed['title'];
-  console.log(feed.source);
+  feed["source"] = feed["title"];
+  delete feed["title"];
 
   // filter items using the function we wrote up top
   feed.items = feed.items.filter(filterFun);
-  return(feed);
+  feed.items = feed.items.map(mapFunc);
+  feed.items.sort((a, b) => {
+    return new Date(b.isoDate) - new Date(a.isoDate);
+  });
+  return feed;
 };
 
 module.exports.callApi = callExternalApiUsingHttp;

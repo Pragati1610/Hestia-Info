@@ -28,9 +28,6 @@ router.get('/', async (req, res) => {
             client.on("error", function (error) {
                 console.error(error);
             });
-            // these are unnecessary
-            // client.set("key", dataString, redis.print);
-            // client.get("key", redis.print);
         }
     });
 
