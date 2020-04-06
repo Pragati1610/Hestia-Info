@@ -40,8 +40,7 @@ router.get("/stats", async (req, res) => {
         const total = await Promise.all([stats, globalData]);
 
         return res.status(200).json({
-            time_series: total[0].data,
-            global_stats: total[1].data
+            time_series: total[0].data
         });
     } catch (err) {
         console.log(err);
@@ -66,10 +65,29 @@ router.get("/allCountriesData", async (req, res) => {
 });
 
 
-router.get("/allCountries", async(req,res) => {
-    try{
+
+router.get("/allCountriesData/:country", async (req, res) => {
+    const country = req.params.country;
+    try {
         const allCountriesData = await axios.get("https://corona.lmao.ninja/countries");
-        const allCountries = allCountriesData.map(item => item.country);
+
+        const countryData = allCountriesData.data.find(item => item.country.toLowerCase() === country.toLowerCase());
+
+        return res.status(200).json({
+            countryData: countryData
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            err: err
+        });
+    };
+});
+
+router.get("/allCountries", async (req, res) => {
+    try {
+        const allCountriesData = await axios.get("https://corona.lmao.ninja/countries");
+        const allCountries = allCountriesData.data.map(item => item.country);
         return res.status(200).json({
             allCountries: allCountries
         });
