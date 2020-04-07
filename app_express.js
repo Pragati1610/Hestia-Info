@@ -35,7 +35,7 @@ router.get('/node', async (req, res) => {
 });
 
 router.get("/stats", (req, res) => {
-    client.get("stats", async (err, reply) => {
+    client.get("stat", async (err, reply) => {
         if (reply) {
             return res.status(200).json(JSON.parse(reply));
         }
@@ -44,11 +44,47 @@ router.get("/stats", (req, res) => {
                 const stats = await axios.get("https://corona.lmao.ninja/v2/historical/all");
                 // const globalData = axios.get("https://corona.lmao.ninja/all");
                 // const total = await Promise.all([stats, globalData]);
+
+                const caseKey = Object.keys(stats.data.cases);
+                const caseValue = Object.values(stats.data.cases);
+
+                const recoveredKey = Object.keys(stats.data.recovered);
+                const recoveredValue = Object.values(stats.data.recovered);
+
+                const deathsKey = Object.keys(stats.data.deaths);
+                const deathsValue = Object.values(stats.data.deaths);
+
+                const caseArr = caseKey.map((item, i)=>{
+                    return {
+                        date: new Date(item),
+                        count: caseValue[i]
+                    }
+                });
+
+                const recoveredArr = recoveredKey.map((item, i)=>{
+                    return {
+                        date: new Date(item),
+                        count: recoveredValue[i]
+                    }
+                });
+
+                const deathsArr = deathsKey.map((item, i)=>{
+                    return {
+                        date: new Date(item),
+                        count: deathsValue[i]
+                    }
+                });
+
+                const arr = {
+                    case: caseArr,
+                    recovered: recoveredArr,
+                    deaths: deathsArr
+                };
                 client.set("stats", JSON.stringify({
-                    time_series: stats.data
+                    time_series: arr
                 }), "EX", 60 * 60 * 12);
                 return res.status(200).json({
-                    time_series: stats.data
+                    time_series: arr
                 });
             } catch (err) {
                 console.log(err);
