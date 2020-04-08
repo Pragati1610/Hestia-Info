@@ -42,8 +42,7 @@ router.get("/stats", (req, res) => {
         else {
             try {
                 const stats = await axios.get("https://corona.lmao.ninja/v2/historical/all");
-                // const globalData = axios.get("https://corona.lmao.ninja/all");
-                // const total = await Promise.all([stats, globalData]);
+                const globalData = await axios.get("https://corona.lmao.ninja/all");
 
                 const caseKey = Object.keys(stats.data.cases);
                 const caseValue = Object.values(stats.data.cases);
@@ -78,7 +77,8 @@ router.get("/stats", (req, res) => {
                 const arr = {
                     case: caseArr,
                     recovered: recoveredArr,
-                    deaths: deathsArr
+                    deaths: deathsArr,
+                    globalData: globalData.data
                 };
                 client.set("stats", JSON.stringify({
                     time_series: arr
