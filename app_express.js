@@ -74,21 +74,28 @@ router.get("/stats", (req, res) => {
                     }
                 });
 
+                const totalCases = caseKey.map((item, i)=>{
+                    return{
+                        date: new Date(item),
+                        count: caseValue[i]+recoveredValue[i]+deathsValue[i]
+                    }
+                });
                 recentCase = caseArr[caseArr.length - 1].count;
                 recentDeath = deathsArr[deathsArr.length - 1].count;
                 recentRecovered = recoveredArr[recoveredArr.length - 1].count;
                 
-                totalCases = recentCase + recentDeath + recentRecovered;
+                recentTotalCases = recentCase + recentDeath + recentRecovered;
 
                 const arr = {
                     case: caseArr,
                     recovered: recoveredArr,
                     deaths: deathsArr,
+                    totalCases: totalCases,
                     globalData: {
                         recentCase: recentCase,
                         recentDeath: recentDeath,
                         recentRecovered: recentRecovered,
-                        totalCases: totalCases
+                        recentTotalCases: recentTotalCases
                     }
                     // globalData: globalData.data
                 };
