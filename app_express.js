@@ -2,13 +2,13 @@ const apiCallFromNode = require('./nodejscall')
 const redis = require("redis");
 const cors = require("cors");
 const express = require("express");
+const _ = require('lodash');
 const app = express();
 const router = express.Router();
 const axios = require("axios");
+const News = require("./models/news");
 
-require("dotenv").config();
 const client = redis.createClient(process.env.REDIS_URL);
-
 
 app.use(cors());
 
@@ -16,22 +16,65 @@ client.on("error", function (error) {
     console.error(error);
 });
 
+function comparer(exists) {
+    console.log(exists);
+    return function (apiItem) {
+        const data = exists.filter(function (existsItem) {
+            return existsItem.guid == apiItem.guid
+        });
+        return data.length == 0;
+    }
+}
+
 router.get('/node', async (req, res) => {
-    var key = "news";
-    client.get(key, async function (err, reply) {
-        res.setHeader('Content-Type', 'application/json; charset=utf-8');
-        if (reply) {
-            res.write(reply);
-            res.end();
-            var data = await apiCallFromNode.callApi();
-            client.set(key, data, "EX", 60 * 60 * 12);
-        } else {
-            var data = await apiCallFromNode.callApi();
-            res.write(JSON.stringify(data));
-            res.end();                       //waits for all the chunks of responses the server 
-            //provides to our requests and then ends the connection         
-        }
+    const key = 1234;
+    const exists = await News.findOne({
+        where: { key }
     });
+    if (exists === null) {
+        const data = await apiCallFromNode.callApi();
+        data["key"] = key;
+        try {
+            await News.create(data);
+            return res.status(201).json(data);
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({ error: err });
+        }
+    } else {
+        const data = await apiCallFromNode.callApi();
+        data["key"] = key;
+        console.log(exists);
+        exists.items = JSON.parse(exists.items)
+        delete exists["createdAt"];
+        delete exists["updatedAt"];
+
+        if (_.isEqual(data, exists)) {
+            console.log(exists);
+            return res.status(200).json(exists);
+        } else {
+            const onlyInApi = data.items.filter(comparer(exists.items))[0];
+            try {
+                await axios.post("http://hestia-requests.herokuapp.com/api/notification/send_notification/", {
+                    message_body: onlyInApi.contentSnippet,
+                    message_title: onlyInApi.title,
+                    to_all: true,
+                    data: {
+                        url: "https://akina.dscvit.com/main",
+                        click_action: "FLUTTER_NOTIFICATION_CLICK",
+                        sound: "default",
+                        status: "done",
+                        screen: "screenA"
+                    }
+                });
+                return res.status(200).json(data);
+            } catch (err) {
+                console.log(err);
+                return res.status(500).json(err);
+            }
+        }
+
+    }
 });
 
 router.get("/stats", (req, res) => {
@@ -53,37 +96,37 @@ router.get("/stats", (req, res) => {
                 const deathsKey = Object.keys(stats.data.deaths);
                 const deathsValue = Object.values(stats.data.deaths);
 
-                const caseArr = caseKey.map((item, i)=>{
+                const caseArr = caseKey.map((item, i) => {
                     return {
                         date: new Date(item),
                         count: caseValue[i]
                     }
                 });
 
-                const recoveredArr = recoveredKey.map((item, i)=>{
+                const recoveredArr = recoveredKey.map((item, i) => {
                     return {
                         date: new Date(item),
                         count: recoveredValue[i]
                     }
                 });
 
-                const deathsArr = deathsKey.map((item, i)=>{
+                const deathsArr = deathsKey.map((item, i) => {
                     return {
                         date: new Date(item),
                         count: deathsValue[i]
                     }
                 });
 
-                const totalCases = caseKey.map((item, i)=>{
-                    return{
+                const totalCases = caseKey.map((item, i) => {
+                    return {
                         date: new Date(item),
-                        count: caseValue[i]+recoveredValue[i]+deathsValue[i]
+                        count: caseValue[i] + recoveredValue[i] + deathsValue[i]
                     }
                 });
                 recentCase = caseArr[caseArr.length - 1].count;
                 recentDeath = deathsArr[deathsArr.length - 1].count;
                 recentRecovered = recoveredArr[recoveredArr.length - 1].count;
-                
+
                 recentTotalCases = recentCase + recentDeath + recentRecovered;
 
                 const arr = {
