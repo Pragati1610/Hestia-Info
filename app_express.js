@@ -25,12 +25,8 @@ function comparer(exists) {
 }
 
 function swap(item){
- 
-
   item.content = item.content.replace(/\&nbsp;/g, " ");
   item.contentSnippet = item.contentSnippet.replace(/\&nbsp;/g, " ");
-
- 
   return item;
 }
 
@@ -68,10 +64,11 @@ router.get("/node", async (req, res) => {
         await axios.post(
           "http://hestia-requests.herokuapp.com/api/notification/send_notification/",
           {
-            message_body: onlyInApi.contentSnippet,
+            message_body: onlyInApi.contentSnippet.substring(0, 128),
             message_title: onlyInApi.title,
             to_all: true,
-            token: "abcd",
+            token: process.env.TOKEN,
+            user_ids: ["28"],
             data: {
               url: "https://akina.dscvit.com/main",
               click_action: "FLUTTER_NOTIFICATION_CLICK",
