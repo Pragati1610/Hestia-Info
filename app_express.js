@@ -24,6 +24,16 @@ function comparer(exists) {
   };
 }
 
+function swap(item){
+ 
+
+  item.content = item.content.replace(/\&nbsp;/g, " ");
+  item.contentSnippet = item.contentSnippet.replace(/\&nbsp;/g, " ");
+
+ 
+  return item;
+}
+
 router.get("/node", async (req, res) => {
   const key = 1234;
   const exists = await News.findOne({
@@ -43,9 +53,11 @@ router.get("/node", async (req, res) => {
     const data = await apiCallFromNode.callApi();
     data["key"] = key;
     // console.log(exists);
-    exists.items = JSON.parse(exists.items);
+    // postgres doesnt support arrays
+    exists.items = JSON.parse(exists.items); 
     delete exists["createdAt"];
     delete exists["updatedAt"];
+    exists.items = exists.items.map(swap);
 
     const onlyInApi = data.items.filter(comparer(exists.items))[0];
 
@@ -59,12 +71,13 @@ router.get("/node", async (req, res) => {
             message_body: onlyInApi.contentSnippet,
             message_title: onlyInApi.title,
             to_all: true,
+            token: "abcd",
             data: {
               url: "https://akina.dscvit.com/main",
               click_action: "FLUTTER_NOTIFICATION_CLICK",
               sound: "default",
               status: "done",
-              screen: "screenA",
+              screen: "screenA"
             },
           }
         );

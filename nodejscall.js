@@ -24,6 +24,12 @@ function mapFunc(item) {
   return item;
 }
 
+function swap(item){
+  item.content = item.content.replace(/\&nbsp;/g, " ");
+  item.contentSnippet = item.contentSnippet.replace(/\&nbsp;/g, " ");
+  return item;
+}
+
 // declare and assign function to export, note that I've removed the () at the end, since that transforms it into a function call
 const callExternalApiUsingHttp = async () => {
   let feed = await parser.parseURL(EXTERNAL_URL);
@@ -36,6 +42,7 @@ const callExternalApiUsingHttp = async () => {
   feed.items.sort((a, b) => {
     return new Date(b.isoDate) - new Date(a.isoDate);
   });
+  feed.items = feed.items.map(swap);
   return feed;
 };
 
