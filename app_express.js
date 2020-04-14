@@ -24,7 +24,7 @@ function comparer(exists) {
   };
 }
 
-function swap(item){
+function swap(item) {
   item.content = item.content.replace(/\&nbsp;/g, " ");
   item.contentSnippet = item.contentSnippet.replace(/\&nbsp;/g, " ");
   return item;
@@ -50,7 +50,7 @@ router.get("/node", async (req, res) => {
     data["key"] = key;
     // console.log(exists);
     // postgres doesnt support arrays
-    exists.items = JSON.parse(exists.items); 
+    exists.items = JSON.parse(exists.items);
     delete exists["createdAt"];
     delete exists["updatedAt"];
     exists.items = exists.items.map(swap);
@@ -78,6 +78,7 @@ router.get("/node", async (req, res) => {
             },
           }
         );
+        await News.update(data, { where: { key } });
         return res.status(200).json(data);
       } catch (err) {
         console.log(err);
