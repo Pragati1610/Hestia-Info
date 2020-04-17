@@ -182,7 +182,7 @@ router.get("/allCountriesData", (req, res) => {
     } else {
       try {
         const allCountriesData = await axios.get(
-          "https://corona.lmao.ninja/countries"
+          "https://corona.lmao.ninja/v2/countries"
         );
         client.set(
           "allCountriesData",
@@ -214,7 +214,7 @@ router.get("/allCountriesData/:country", (req, res) => {
     } else {
       try {
         const allCountriesData = await axios.get(
-          "https://corona.lmao.ninja/countries"
+          "https://corona.lmao.ninja/v2/countries"
         );
 
         const countryData = allCountriesData.data.find(
@@ -248,7 +248,7 @@ router.get("/allCountries", (req, res) => {
     } else {
       try {
         const allCountriesData = await axios.get(
-          "https://corona.lmao.ninja/countries"
+          "https://corona.lmao.ninja/v2/countries"
         );
         const allCountries = allCountriesData.data.map((item) => item.country);
         client.set(
