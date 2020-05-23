@@ -33,7 +33,9 @@ function swap(item) {
 router.get("/node", async (req, res) => {
   const key = 1234;
   const exists = await News.findOne({
-    where: { key },
+    where: {
+      key
+    },
   });
   if (exists === null) {
     const data = await apiCallFromNode.callApi();
@@ -43,7 +45,9 @@ router.get("/node", async (req, res) => {
       return res.status(201).json(data);
     } catch (err) {
       console.log(err);
-      return res.status(500).json({ error: err });
+      return res.status(500).json({
+        error: err
+      });
     }
   } else {
     const data = await apiCallFromNode.callApi();
@@ -62,8 +66,7 @@ router.get("/node", async (req, res) => {
     } else {
       try {
         await axios.post(
-          "http://hestia-requests.herokuapp.com/api/notification/send_notification/",
-          {
+          "http://hestia-requests.herokuapp.com/api/notification/send_notification/", {
             message_body: onlyInApi.contentSnippet.substring(0, 128),
             message_title: onlyInApi.title,
             to_all: true,
@@ -78,7 +81,11 @@ router.get("/node", async (req, res) => {
             },
           }
         );
-        await News.update(data, { where: { key } });
+        await News.update(data, {
+          where: {
+            key
+          }
+        });
         return res.status(200).json(data);
       } catch (err) {
         console.log(err);
@@ -135,11 +142,11 @@ router.get("/stats", (req, res) => {
             count: caseValue[i] + recoveredValue[i] + deathsValue[i],
           };
         });
-        recentCase = caseArr[caseArr.length - 1].count;
-        recentDeath = deathsArr[deathsArr.length - 1].count;
-        recentRecovered = recoveredArr[recoveredArr.length - 1].count;
+        let recentCase = caseArr[caseArr.length - 1].count;
+        let recentDeath = deathsArr[deathsArr.length - 1].count;
+        let recentRecovered = recoveredArr[recoveredArr.length - 1].count;
 
-        recentTotalCases = recentCase + recentDeath + recentRecovered;
+        let recentTotalCases = recentCase + recentDeath + recentRecovered;
 
         const arr = {
           case: caseArr,

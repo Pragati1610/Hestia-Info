@@ -1,6 +1,6 @@
 const Parser = require("rss-parser");
 
-EXTERNAL_URL = "https://www.who.int/rss-feeds/news-english.xml";
+let EXTERNAL_URL = "https://www.who.int/rss-feeds/news-english.xml";
 
 const parser = new Parser();
 
