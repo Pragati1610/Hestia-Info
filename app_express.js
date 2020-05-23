@@ -73,7 +73,7 @@ router.get("/node", async (req, res) => {
             token: process.env.TOKEN,
             user_ids: ["28"],
             data: {
-              url: "https://akina.dscvit.com/main",
+              url: "https://akina.ayushpriya.tech/main",
               click_action: "FLUTTER_NOTIFICATION_CLICK",
               sound: "default",
               status: "done",
