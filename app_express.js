@@ -66,7 +66,7 @@ router.get("/node", async (req, res) => {
     } else {
       try {
         await axios.post(
-          "http://hestia-requests.herokuapp.com/api/notification/send_notification/", {
+          "https://akina.ayushpriya.tech/api/notification/send_notification/", {
             message_body: onlyInApi.contentSnippet.substring(0, 128),
             message_title: onlyInApi.title,
             to_all: true,
